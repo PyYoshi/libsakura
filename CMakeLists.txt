@@ -24,5 +24,4 @@ include(cmake/zlib.cmake)
 include(cmake/libpng.cmake)
 #include(cmake/libjpeg_turbo.cmake)
 include(cmake/mozjpeg.cmake)
-
-include_directories(${PROJECT_SOURCE_DIR}/src/sakura)
+include(cmake/BuildSakura.cmake)
