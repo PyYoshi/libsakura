@@ -25,10 +25,7 @@ find_library(M_LIBRARY
   PATHS /usr/lib /usr/local/lib
 )
 
-find_library(Z_LIBRARY
-  NAMES z
-  PATHS ${THIRDPARTY_LIBRARY_PATH}
-)
+set(Z_LIBRARY ${THIRDPARTY_LIBRARY_PATH}/libz.a)
 
 configure_file(${LIBPNG_HOME}/scripts/pnglibconf.h.prebuilt
                ${LIBPNG_HOME}/pnglibconf.h)
