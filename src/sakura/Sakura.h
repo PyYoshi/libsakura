@@ -3,6 +3,22 @@
 
 #include <iostream>
 #include <string>
+#include <exception>
+
+class SakuraException: public std::exception
+{
+public:
+    explicit SakuraException(const char* message): msg_(message) {}
+    explicit SakuraException(const std::string& message): msg_(message) {}
+    virtual ~SakuraException() throw (){}
+
+    virtual const char* what() const throw (){
+        return msg_.c_str();
+    }
+
+protected:
+    std::string msg_;
+};
 
 enum SakuraPictureType {
     BITMAP,
