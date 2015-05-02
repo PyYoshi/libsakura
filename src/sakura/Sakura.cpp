@@ -93,8 +93,9 @@ Sakura::Sakura(const char * filePath) {
             this->loadWebp(filePath);
             break;
         default:
-            fprintf(stderr, "Unsupported image format: %s\n", filePath);
-            exit(1);
+            std::string msg = "Unsupported image format: ";
+            msg += filePath;
+            throw SakuraException(msg);
     }
 }
 
