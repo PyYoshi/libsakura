@@ -1,18 +1,22 @@
 # Base: https://github.com/tarantool/tarantool/blob/master/cmake/simd.cmake
 # http://qiita.com/yohhoy/items/5850e707f01cc905a272
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_COMPILER_IS_CLANG TRUE)
+endif()
+
 if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|^i[3,9]86$")
     return()
 endif()
 
-include(CheckCSourceRuns)
+include(CheckCXXSourceRuns)
 
 #
 # Check compiler for SSE intrinsics
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-msse")
-    check_c_source_runs("
+    check_cxx_source_runs("
     #include <immintrin.h>
 
     int main()
@@ -28,7 +32,7 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-msse2")
-    check_c_source_runs("
+    check_cxx_source_runs("
     #include <immintrin.h>
 
     int main()
@@ -44,7 +48,7 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-msse3")
-    check_c_source_runs("
+    check_cxx_source_runs("
     #include <immintrin.h>
 
     int main()
@@ -61,14 +65,18 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-msse4 -msse4.1")
-    check_c_source_runs("
-    #include <immintrin.h>
-
-    int main()
+    check_cxx_source_runs("
+    #include <smmintrin.h>
+    int main ()
     {
-    __m128i a = {0,0,0,0}, b = {0,0,0,0};
-    __m128i res = _mm_max_epi8(a, b);
-    return 0;
+    __m128 a, b;
+    float vals[4] = {1, 2, 3, 4};
+    const int mask = 123;
+    a = _mm_loadu_ps (vals);
+    b = a;
+    b = _mm_dp_ps (a, a, mask);
+    _mm_storeu_ps (vals,b);
+    return (0);
     }"
     CC_HAS_SSE4_1_INTRINSICS)
 endif()
@@ -78,14 +86,22 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-msse4 -msse4.2")
-    check_c_source_runs("
-    #include <immintrin.h>
-
-    int main()
+    check_cxx_source_runs("
+    #include <emmintrin.h>
+    #include <nmmintrin.h>
+    int main ()
     {
-    __m128i a = {0,0,0,0}, b = {0,0,0,0};
-    __m128i res = _mm_cmpgt_epi64(a, b);
-    return 0;
+    long long a[2] = {  1, 2 };
+    long long b[2] = { -1, 3 };
+    long long c[2];
+    __m128i va = _mm_loadu_si128 ((__m128i*)a);
+    __m128i vb = _mm_loadu_si128 ((__m128i*)b);
+    __m128i vc = _mm_cmpgt_epi64 (va, vb);
+    _mm_storeu_si128 ((__m128i*)c, vc);
+    if (c[0] == -1LL && c[1] == 0LL)
+    return (0);
+    else
+    return (1);
     }"
     CC_HAS_SSE4_2_INTRINSICS)
 endif()
@@ -95,7 +111,7 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-mavx")
-    check_c_source_runs("
+    check_cxx_source_runs("
     #include <immintrin.h>
 
     int main()
@@ -111,7 +127,7 @@ endif()
 #
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG )
     set(CMAKE_REQUIRED_FLAGS "-mavx2")
-    check_c_source_runs("
+    check_cxx_source_runs("
     #include <immintrin.h>
 
     int main()
