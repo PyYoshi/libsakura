@@ -39,6 +39,7 @@ class SakuraPicture {
         int height;
         int stride;
         unsigned char *rgba;
+        bool hasAlpha;
 
     private:
         ~SakuraPicture();

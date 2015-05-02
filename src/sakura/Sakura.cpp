@@ -106,14 +106,25 @@ SakuraPicture * Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
     // ignore message: Warning: data is not aligned! This can lead to a speedloss
     av_log_set_level(AV_LOG_ERROR);
 
+    int stride;
+    AVPixelFormat format;
+    if (this->_pic->hasAlpha) {
+        format = PIX_FMT_RGBA;
+        stride = outWidth * 4;
+    } else {
+        format = PIX_FMT_RGB24;
+        stride = outWidth * 3;
+    }
+
     struct SwsContext * scaler;
-    scaler = sws_getContext(this->_pic->width, this->_pic->height, PIX_FMT_RGBA, outWidth, outHeight, PIX_FMT_RGBA, scaleMode, NULL, NULL, NULL);
+    scaler = sws_getContext(this->_pic->width, this->_pic->height, format, outWidth, outHeight, format, scaleMode, NULL, NULL, NULL);
 
     SakuraPicture * oPic = new SakuraPicture();
     oPic->width = outWidth;
     oPic->height = outHeight;
-    oPic->stride = outWidth * 4; // 32bit
+    oPic->stride = stride;
     oPic->rgba = new unsigned char[oPic->height * oPic->stride];
+    oPic->hasAlpha = this->_pic->hasAlpha;
 
     sws_scale(scaler, &this->_pic->rgba, &this->_pic->stride, 0, this->_pic->height, &oPic->rgba, &oPic->stride);
 
@@ -149,6 +160,14 @@ void Sakura::loadPng(const char * filePath){
     this->_pic->stride = stride;
     this->_pic->rgba = buf;
 
+    if (png.format == PNG_FORMAT_RGB) {
+        this->_pic->hasAlpha = false;
+    } else if (png.format == PNG_FORMAT_RGBA) {
+        this->_pic->hasAlpha = true;
+    } else {
+        throw "Supported Only RGB and RGBA";
+    }
+
     png_image_free(&png);
 
 }
@@ -172,7 +191,12 @@ void Sakura::OutputPng(const char * filePath, SakuraPicture * pic) {
 
     png.width  = pic->width;
     png.height = pic->height;
-    png.format = PNG_FORMAT_RGBA;
+
+    if (pic->hasAlpha) {
+        png.format = PNG_FORMAT_RGBA;
+    } else {
+        png.format = PNG_FORMAT_RGB;
+    }
 
     uint32_t stride = PNG_IMAGE_ROW_STRIDE(png);
 
