@@ -12,10 +12,10 @@ endif()
 
 ExternalProject_Add(
 	LIBJPEGTURBO
-	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/mozjpeg-3.0
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/mozjpeg-3.0/ && autoreconf -fiv && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR}
-	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/mozjpeg-3.0/ && make
-	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/mozjpeg-3.0/ && make install
+	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && autoreconf -fiv && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR} --without-simd
+	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && make
+	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && make install
 )
 
 ExternalProject_Add(
