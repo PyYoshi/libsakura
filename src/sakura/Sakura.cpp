@@ -10,11 +10,10 @@ extern "C"
 #include "png.h"
 #include "pngconf.h"
 
-#include "jpeglib.h"
-#include "jpegint.h"
+#include "turbojpeg.h"
 
-#include "libavutil/parseutils.h"
-#include "libavformat/avformat.h"
+#include "libavutil/log.h"
+#include "libavutil/pixfmt.h"
 #include "libswscale/swscale.h"
 }
 
@@ -170,11 +169,53 @@ void Sakura::loadPng(const char * filePath){
     }
 
     png_image_free(&png);
-
 }
 
 void Sakura::loadJpeg(const char * filePath){
-    throw "Function not yet implemented.";
+    FILE* fp = fopen(filePath, "rb");
+    if (fp != NULL) {
+        fseek(fp, 0L, SEEK_END);
+        unsigned long fileSize = (unsigned)ftell(fp);
+        fseek(fp, 0L, SEEK_SET);
+        unsigned char * fileBuffer = new unsigned char[fileSize];
+
+        fread(fileBuffer, fileSize, 1, fp);
+        fclose(fp);
+
+        tjhandle jpegHandle = tjInitDecompress();
+        int jpegSubsample = 0;
+        int width, height;
+
+        tjDecompressHeader2(jpegHandle, fileBuffer, fileSize, &width, &height, &jpegSubsample);
+
+        unsigned char * rgbBuffer = new unsigned char[tjBufSize(width, height, jpegSubsample)];
+
+        int stride = width * tjPixelSize[TJPF_RGB];
+
+        this->_pic->width = width;
+        this->_pic->height = height;
+        this->_pic->stride = stride;
+        this->_pic->hasAlpha = false;
+
+        const int result = tjDecompress2(jpegHandle, fileBuffer, fileSize, rgbBuffer,
+                                   width, stride, height, TJPF_RGB, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
+        this->_pic->rgba = rgbBuffer;
+
+        if (result != 0) {
+            std::string msg = "Failed while tjCompress2: ";
+            msg += tjGetErrorStr();
+            delete[] fileBuffer; fileBuffer = NULL;
+            tjDestroy(jpegHandle);
+            throw SakuraException(msg);
+        }
+
+        delete[] fileBuffer; fileBuffer = NULL;
+        tjDestroy(jpegHandle);
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        throw SakuraException(msg);
+    }
 }
 
 void Sakura::loadWebp(const char * filePath){
@@ -208,8 +249,35 @@ void Sakura::OutputPng(const char * filePath, SakuraPicture * pic) {
     png_image_free(&png);
 }
 
-void Sakura::OutputJpeg(const char * filePath, SakuraPicture * pic) {
-    throw "Function not yet implemented.";
+void Sakura::OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality) {
+    tjhandle jpegHandle = tjInitCompress();
+
+    unsigned char * jpegBuf = NULL;
+    unsigned long jpegSize = 0;
+
+    const int result = tjCompress2(jpegHandle, pic->rgba, pic->width, pic->stride, pic->height, TJPF_RGB,
+                                   &jpegBuf, &jpegSize, TJSAMP_444, quality, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
+    if (result != 0) {
+        std::string msg = "Failed while tjCompress2: ";
+        msg += tjGetErrorStr();
+        tjFree(jpegBuf);
+        tjDestroy(jpegHandle);
+        throw SakuraException(msg);
+    }
+
+    FILE *fp = fopen(filePath, "wb");
+    if (fp != NULL) {
+        fwrite(jpegBuf, jpegSize, 1, fp);
+        fclose(fp);
+        tjFree(jpegBuf);
+        tjDestroy(jpegHandle);
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        tjFree(jpegBuf);
+        tjDestroy(jpegHandle);
+        throw SakuraException(msg);
+    }
 }
 
 void Sakura::OutputWebp(const char * filePath, SakuraPicture * pic) {

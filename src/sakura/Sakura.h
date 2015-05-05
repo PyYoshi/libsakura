@@ -67,7 +67,7 @@ class Sakura {
         SakuraPicture * Scale(int outWidth, int outHeight, int scaleMode);
         static void OutputBitmap(const char * filePath, SakuraPicture * pic);
         static void OutputPng(const char * filePath, SakuraPicture * pic);
-        static void OutputJpeg(const char * filePath, SakuraPicture * pic);
+        static void OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality);
         static void OutputWebp(const char * filePath, SakuraPicture * pic);
 
     private:
