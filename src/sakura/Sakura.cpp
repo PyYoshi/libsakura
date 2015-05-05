@@ -150,7 +150,7 @@ void Sakura::loadPng(const char * filePath){
     uint32_t stride = PNG_IMAGE_ROW_STRIDE(png);
     uint8_t * buf = new unsigned char[PNG_IMAGE_BUFFER_SIZE(png, stride)];
 
-    png_image_finish_read(&png, NULL, buf, -stride, NULL);
+    png_image_finish_read(&png, NULL, buf, stride, NULL);
     if (PNG_IMAGE_FAILED(png)) {
         throw std::runtime_error(png.message);
     }
@@ -242,7 +242,7 @@ void Sakura::OutputPng(const char * filePath, SakuraPicture * pic) {
 
     uint32_t stride = PNG_IMAGE_ROW_STRIDE(png);
 
-    png_image_write_to_file(&png, filePath, 0, pic->rgba, -stride, NULL);
+    png_image_write_to_file(&png, filePath, 0, pic->rgba, stride, NULL);
     if (PNG_IMAGE_FAILED(png)) {
         throw std::runtime_error(png.message);
     }
