@@ -27,27 +27,27 @@ std::string SakuraUtils::GetFileName(const char *filePath) {
 
     size_t i = path.rfind(sep, path.length());
     if (i != std::string::npos) {
-        return(path.substr(i+1, path.length() - i));
+        return (path.substr(i + 1, path.length() - i));
     }
-    return("");
+    return ("");
 }
 
 std::string SakuraUtils::GetExt(std::string fileName) {
     std::string ext;
     size_t pos = fileName.rfind('.', fileName.length());
-    if(pos != std::string::npos){
-        ext = fileName.substr(pos+1, fileName.size()-pos);
+    if (pos != std::string::npos) {
+        ext = fileName.substr(pos + 1, fileName.size() - pos);
         std::string::iterator itr = ext.begin();
-        while(itr != ext.end()){
+        while (itr != ext.end()) {
             *itr = tolower(*itr);
             itr++;
         }
-        itr = ext.end()-1;
-        while(itr != ext.begin()){
-            if(*itr == 0 || *itr == 32){
+        itr = ext.end() - 1;
+        while (itr != ext.begin()) {
+            if (*itr == 0 || *itr == 32) {
                 ext.erase(itr--);
             }
-            else{
+            else {
                 itr--;
             }
         }
@@ -70,10 +70,10 @@ SakuraPictureType SakuraUtils::GetType(std::string ext) {
 }
 
 SakuraPicture::~SakuraPicture() {
-    delete []rgba;
+    delete[]rgba;
 }
 
-Sakura::Sakura(const char * filePath) {
+Sakura::Sakura(const char *filePath) {
     this->_pic = new SakuraPicture();
     std::string fileName = SakuraUtils::GetFileName(filePath);
     std::string ext = SakuraUtils::GetExt(fileName);
@@ -102,7 +102,7 @@ Sakura::~Sakura() {
     delete &this->_pic;
 }
 
-SakuraPicture * Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
+SakuraPicture *Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
     // ignore message: Warning: data is not aligned! This can lead to a speedloss
     av_log_set_level(AV_LOG_ERROR);
 
@@ -116,10 +116,11 @@ SakuraPicture * Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
         stride = outWidth * 3;
     }
 
-    struct SwsContext * scaler;
-    scaler = sws_getContext(this->_pic->width, this->_pic->height, format, outWidth, outHeight, format, scaleMode, NULL, NULL, NULL);
+    struct SwsContext *scaler;
+    scaler = sws_getContext(this->_pic->width, this->_pic->height, format, outWidth, outHeight, format, scaleMode, NULL,
+                            NULL, NULL);
 
-    SakuraPicture * oPic = new SakuraPicture();
+    SakuraPicture *oPic = new SakuraPicture();
     oPic->width = outWidth;
     oPic->height = outHeight;
     oPic->stride = stride;
@@ -132,11 +133,11 @@ SakuraPicture * Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
     return oPic;
 }
 
-void Sakura::loadBitmap(const char * filePath) {
+void Sakura::loadBitmap(const char *filePath) {
     throw "Function not yet implemented.";
 }
 
-void Sakura::loadPng(const char * filePath){
+void Sakura::loadPng(const char *filePath) {
     png_image png;
     volatile png_structp png2;
     memset(&png, 0, sizeof(png));
@@ -148,7 +149,7 @@ void Sakura::loadPng(const char * filePath){
     }
 
     uint32_t stride = PNG_IMAGE_ROW_STRIDE(png);
-    uint8_t * buf = new unsigned char[PNG_IMAGE_BUFFER_SIZE(png, stride)];
+    uint8_t *buf = new unsigned char[PNG_IMAGE_BUFFER_SIZE(png, stride)];
 
     png_image_finish_read(&png, NULL, buf, stride, NULL);
     if (PNG_IMAGE_FAILED(png)) {
@@ -171,13 +172,13 @@ void Sakura::loadPng(const char * filePath){
     png_image_free(&png);
 }
 
-void Sakura::loadJpeg(const char * filePath){
-    FILE* fp = fopen(filePath, "rb");
+void Sakura::loadJpeg(const char *filePath) {
+    FILE *fp = fopen(filePath, "rb");
     if (fp != NULL) {
         fseek(fp, 0L, SEEK_END);
-        unsigned long fileSize = (unsigned)ftell(fp);
+        unsigned long fileSize = (unsigned) ftell(fp);
         fseek(fp, 0L, SEEK_SET);
-        unsigned char * fileBuffer = new unsigned char[fileSize];
+        unsigned char *fileBuffer = new unsigned char[fileSize];
 
         fread(fileBuffer, fileSize, 1, fp);
         fclose(fp);
@@ -188,7 +189,7 @@ void Sakura::loadJpeg(const char * filePath){
 
         tjDecompressHeader2(jpegHandle, fileBuffer, fileSize, &width, &height, &jpegSubsample);
 
-        unsigned char * rgbBuffer = new unsigned char[tjBufSize(width, height, jpegSubsample)];
+        unsigned char *rgbBuffer = new unsigned char[tjBufSize(width, height, jpegSubsample)];
 
         int stride = width * tjPixelSize[TJPF_RGB];
 
@@ -198,18 +199,18 @@ void Sakura::loadJpeg(const char * filePath){
         this->_pic->hasAlpha = false;
 
         const int result = tjDecompress2(jpegHandle, fileBuffer, fileSize, rgbBuffer,
-                                   width, stride, height, TJPF_RGB, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
+                                         width, stride, height, TJPF_RGB, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
         this->_pic->rgba = rgbBuffer;
 
         if (result != 0) {
             std::string msg = "Failed while tjCompress2: ";
             msg += tjGetErrorStr();
-            delete[] fileBuffer; fileBuffer = NULL;
+            delete[] fileBuffer;
             tjDestroy(jpegHandle);
             throw SakuraException(msg);
         }
 
-        delete[] fileBuffer; fileBuffer = NULL;
+        delete[] fileBuffer;
         tjDestroy(jpegHandle);
     } else {
         std::string msg = "Could not open file: ";
@@ -218,25 +219,25 @@ void Sakura::loadJpeg(const char * filePath){
     }
 }
 
-void Sakura::loadWebp(const char * filePath){
-    FILE* fp = fopen(filePath, "rb");
+void Sakura::loadWebp(const char *filePath) {
+    FILE *fp = fopen(filePath, "rb");
     if (fp != NULL) {
         fseek(fp, 0L, SEEK_END);
-        unsigned long fileSize = (unsigned)ftell(fp);
+        unsigned long fileSize = (unsigned) ftell(fp);
         fseek(fp, 0L, SEEK_SET);
-        unsigned char * fileBuffer = new unsigned char[fileSize];
+        unsigned char *fileBuffer = new unsigned char[fileSize];
 
         fread(fileBuffer, fileSize, 1, fp);
         fclose(fp);
 
-        WebPBitstreamFeatures * webpFeature = new WebPBitstreamFeatures();
+        WebPBitstreamFeatures *webpFeature = new WebPBitstreamFeatures();
         VP8StatusCode gRet = WebPGetFeatures(fileBuffer, fileSize, webpFeature);
         if (gRet == VP8_STATUS_OK) {
             if (webpFeature->has_animation == 1) {
                 std::string msg = "Unsupported WebP animation mode: ";
                 msg += filePath;
-                delete[] fileBuffer; fileBuffer = NULL;
-                delete webpFeature; webpFeature = NULL;
+                delete[] fileBuffer;
+                delete webpFeature;
                 throw SakuraException(msg);
             }
 
@@ -255,16 +256,17 @@ void Sakura::loadWebp(const char * filePath){
             if (this->_pic->rgba == NULL) {
                 std::string msg = "Invalid WebP format: ";
                 msg += filePath;
-                delete[] fileBuffer; fileBuffer = NULL;
-                delete webpFeature; webpFeature = NULL;
+                delete[] fileBuffer;
+                delete webpFeature;
                 throw SakuraException(msg);
             }
-            delete[] fileBuffer; fileBuffer = NULL;
+            delete[] fileBuffer;
+            delete webpFeature;
         } else {
             std::string msg = "Invalid WebP format: ";
             msg += filePath;
-            delete[] fileBuffer; fileBuffer = NULL;
-            delete webpFeature; webpFeature = NULL;
+            delete[] fileBuffer;
+            delete webpFeature;
             throw SakuraException(msg);
         };
     } else {
@@ -274,16 +276,16 @@ void Sakura::loadWebp(const char * filePath){
     }
 }
 
-void Sakura::OutputBitmap(const char * filePath, SakuraPicture * pic) {
+void Sakura::OutputBitmap(const char *filePath, SakuraPicture *pic) {
     throw "Function not yet implemented.";
 }
 
-void Sakura::OutputPng(const char * filePath, SakuraPicture * pic) {
+void Sakura::OutputPng(const char *filePath, SakuraPicture *pic) {
     png_image png;
     memset(&png, 0, sizeof(png));
     png.version = PNG_IMAGE_VERSION;
 
-    png.width  = pic->width;
+    png.width = pic->width;
     png.height = pic->height;
 
     if (pic->hasAlpha) {
@@ -301,10 +303,10 @@ void Sakura::OutputPng(const char * filePath, SakuraPicture * pic) {
     png_image_free(&png);
 }
 
-void Sakura::OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality) {
+void Sakura::OutputJpeg(const char *filePath, SakuraPicture *pic, unsigned int quality) {
     tjhandle jpegHandle = tjInitCompress();
 
-    unsigned char * jpegBuf = NULL;
+    unsigned char *jpegBuf = NULL;
     unsigned long jpegSize = 0;
 
     const int result = tjCompress2(jpegHandle, pic->rgba, pic->width, pic->stride, pic->height, TJPF_RGB,
@@ -332,8 +334,8 @@ void Sakura::OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int
     }
 }
 
-void Sakura::OutputWebp(const char * filePath, SakuraPicture * pic, unsigned int quality) {
-    unsigned char * webpBuffer = NULL;
+void Sakura::OutputWebp(const char *filePath, SakuraPicture *pic, unsigned int quality) {
+    unsigned char *webpBuffer = NULL;
     size_t buffSize = 0;
     if (pic->hasAlpha) {
         buffSize = WebPEncodeRGBA(pic->rgba, pic->width, pic->height, pic->stride, quality, &webpBuffer);
@@ -350,11 +352,11 @@ void Sakura::OutputWebp(const char * filePath, SakuraPicture * pic, unsigned int
     if (fp != NULL) {
         fwrite(webpBuffer, buffSize, 1, fp);
         fclose(fp);
-        delete[] webpBuffer; webpBuffer = NULL;
+        delete[] webpBuffer;
     } else {
         std::string msg = "Could not open file: ";
         msg += filePath;
-        delete[] webpBuffer; webpBuffer = NULL;
+        delete[] webpBuffer;
         throw SakuraException(msg);
     }
 }
