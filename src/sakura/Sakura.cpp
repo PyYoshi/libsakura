@@ -417,7 +417,14 @@ void Sakura::OutputJpeg(const char *filePath, SakuraPicture *pic, unsigned int q
     unsigned char *jpegBuf = NULL;
     unsigned long jpegSize = 0;
 
-    const int result = tjCompress2(jpegHandle, pic->rgba, pic->width, pic->stride, pic->height, TJPF_RGB,
+    TJPF format;
+    if (pic->hasAlpha) {
+        format = TJPF_RGBA;
+    } else {
+        format = TJPF_RGB;
+    }
+
+    const int result = tjCompress2(jpegHandle, pic->rgba, pic->width, pic->stride, pic->height, format,
                                    &jpegBuf, &jpegSize, TJSAMP_444, quality, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
     if (result != 0) {
         std::string msg = "Failed while tjCompress2: ";
