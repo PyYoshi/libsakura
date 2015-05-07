@@ -281,8 +281,107 @@ void Sakura::loadWebp(const char *filePath) {
     }
 }
 
+typedef struct {
+    unsigned char * src;
+    size_t size;
+    size_t read;
+} GifHelperReadCbData;
+
+int GifHelperByteBufferReadFun(GifFileType* gif, GifByteType* bytes, int size) {
+    GifHelperReadCbData* cbData = (GifHelperReadCbData*) gif->UserData;
+    if (cbData->read + size > cbData->size) {
+        memcpy(bytes, cbData->src + cbData->read, cbData->size - cbData->read);
+        cbData->read = cbData->read;
+        return (int) (cbData->size - cbData->read);
+    }
+    memcpy(bytes, cbData->src + cbData->read, (size_t) size);
+    cbData->read += size;
+    return size;
+}
+
 void Sakura::loadGif(const char *filePath) {
-    throw "Function not yet implemented.";
+    FILE *fp = fopen(filePath, "rb");
+    if (fp != NULL) {
+        fseek(fp, 0L, SEEK_END);
+        unsigned long fileSize = (unsigned) ftell(fp);
+        fseek(fp, 0L, SEEK_SET);
+        unsigned char* fileBuffer = new unsigned char[fileSize];
+
+        fread(fileBuffer, fileSize, 1, fp);
+        fclose(fp);
+
+        int gifError = 0;
+
+        GifHelperReadCbData cbData = {fileBuffer, fileSize, 0};
+        GifFileType* gif = DGifOpen((void*)&cbData, &GifHelperByteBufferReadFun, &gifError);
+        if (gif == NULL) {
+            std::string msg = "gif error: ";
+            msg += GifErrorString(gifError);
+            delete[] fileBuffer;
+            throw SakuraException(msg);
+        }
+        if (gifError != D_GIF_SUCCEEDED) {
+            std::string msg = "gif error: ";
+            msg += GifErrorString(gif->Error);
+            delete[] fileBuffer;
+            throw SakuraException(msg);
+        }
+
+        if (DGifSlurp(gif) == GIF_ERROR) {
+            std::string msg = "gif error: ";
+            msg += GifErrorString(gif->Error);
+            delete[] fileBuffer;
+            throw SakuraException(msg);
+        }
+
+        GraphicsControlBlock gcb;
+        bool hasGCB = DGifSavedExtensionToGCB(gif, 0, &gcb) != GIF_ERROR;
+
+        // Unsupported Animation GIF File
+        SavedImage * gifimg = &gif->SavedImages[0];
+
+        int stride = gif->SWidth * 4;
+        this->_pic->width = gif->SWidth;
+        this->_pic->height = gif->SHeight;
+        this->_pic->stride = stride;
+        this->_pic->hasAlpha = true;
+
+        GifByteType ci;
+        this->_pic->rgba = new unsigned char[this->_pic->stride * this->_pic->height];
+        int len = this->_pic->width * this->_pic->height;
+        unsigned char alpha;
+        GifColorType c;
+        GifColorType c_trans = {0, 0, 0};
+        ColorMapObject * cmap = NULL != gifimg->ImageDesc.ColorMap
+                                ? gifimg->ImageDesc.ColorMap
+                                : gif->SColorMap;
+        for (int i=0; i<len; i++){
+            ci = gifimg->RasterBits[i];
+            if (hasGCB && ci == gcb.TransparentColor){
+                c = c_trans;
+                alpha = 0;
+            } else {
+                c = cmap->Colors[ci];
+                alpha = 255;
+            }
+            this->_pic->rgba[i * 4] = c.Red;
+            this->_pic->rgba[i * 4 + 1] = c.Green;
+            this->_pic->rgba[i * 4 + 2] = c.Blue;
+            this->_pic->rgba[i * 4 + 3] = alpha;
+        }
+
+        delete[] fileBuffer;
+        if (DGifCloseFile(gif, &gifError) == GIF_ERROR) {
+            std::string msg = "gif error: ";
+            msg += GifErrorString(gifError);
+            delete[] fileBuffer;
+            throw SakuraException(msg);
+        }
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        throw SakuraException(msg);
+    }
 }
 
 void Sakura::OutputBitmap(const char *filePath, SakuraPicture *pic) {
