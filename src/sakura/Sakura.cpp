@@ -91,6 +91,9 @@ Sakura::Sakura(const char *filePath) {
         case SakuraPictureType::WEBP :
             this->loadWebp(filePath);
             break;
+        case SakuraPictureType::GIF :
+            this->loadGif(filePath);
+            break;
         default:
             std::string msg = "Unsupported image format: ";
             msg += filePath;
@@ -276,6 +279,10 @@ void Sakura::loadWebp(const char *filePath) {
     }
 }
 
+void Sakura::loadGif(const char *filePath) {
+    throw "Function not yet implemented.";
+}
+
 void Sakura::OutputBitmap(const char *filePath, SakuraPicture *pic) {
     throw "Function not yet implemented.";
 }
@@ -359,4 +366,8 @@ void Sakura::OutputWebp(const char *filePath, SakuraPicture *pic, unsigned int q
         delete[] webpBuffer;
         throw SakuraException(msg);
     }
+}
+
+void Sakura::OutputGif(const char *filePath, SakuraPicture *pic) {
+    throw "Function not yet implemented.";
 }

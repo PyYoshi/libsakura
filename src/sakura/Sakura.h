@@ -25,6 +25,7 @@ enum SakuraPictureType {
     PNG,
     JPEG,
     WEBP,
+    GIF,
     UNKNOWN
 };
 
@@ -69,6 +70,7 @@ class Sakura {
         static void OutputPng(const char * filePath, SakuraPicture * pic);
         static void OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality);
         static void OutputWebp(const char * filePath, SakuraPicture * pic, unsigned int quality);
+        static void OutputGif(const char * filePath, SakuraPicture * pic);
 
     private:
         SakuraPicture * _pic;
@@ -79,6 +81,7 @@ class Sakura {
         void loadPng(const char * filePath);
         void loadJpeg(const char * filePath);
         void loadWebp(const char * filePath);
+        void loadGif(const char * filePath);
 };
 
 #endif //SAKURA_SAKURA_H
