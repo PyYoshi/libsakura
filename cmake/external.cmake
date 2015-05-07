@@ -13,7 +13,7 @@ endif()
 ExternalProject_Add(
 	LIBJPEGTURBO
 	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && autoreconf -fiv && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR} --without-simd
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && autoreconf -fiv && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR} --disable-dependency-tracking --disable-shared --without-simd
 	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && make
 	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/libjpeg-turbo-1.4.0/ && make install
 )
@@ -21,7 +21,7 @@ ExternalProject_Add(
 ExternalProject_Add(
 	LIBWEBP
 	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/libwebp-0.4.3
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/libwebp-0.4.3/ && ./autogen.sh && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR}
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/libwebp-0.4.3/ && ./autogen.sh && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR} --disable-dependency-tracking --enable-shared=no
 	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/libwebp-0.4.3/ && make
 	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/libwebp-0.4.3/ && make install
 )
@@ -30,7 +30,7 @@ ExternalProject_Add(
 ExternalProject_Add(
 	GIFLIB
 	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/giflib-5.1.1
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/giflib-5.1.1/ && ./autogen.sh && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR}
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/giflib-5.1.1/ && ./autogen.sh && ./configure CFLAGS=${DEBUG_CFLAGS} CXXFLAGS=${DEBUG_CFLAGS} --prefix=${THIRDPARTY_TARGET_DIR} --disable-dependency-tracking
 	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/giflib-5.1.1/ && make
 	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/giflib-5.1.1/ && make install
 )
@@ -39,7 +39,7 @@ ExternalProject_Add(
 ExternalProject_Add(
 	FFMPEG
 	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && ./configure --prefix=${THIRDPARTY_TARGET_DIR} ${FFMPEG_DEBUG} --disable-programs --disable-doc --disable-everything --disable-avdevice --disable-avcodec --disable-swresample --disable-postproc --disable-avfilter
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && ./configure --prefix=${THIRDPARTY_TARGET_DIR} ${FFMPEG_DEBUG} --disable-programs --disable-doc --disable-everything --disable-avdevice --disable-avcodec --disable-swresample --disable-postproc --disable-avfilter --disable-shared
 	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && make
 	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && make install
 )
