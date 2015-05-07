@@ -107,7 +107,7 @@ Sakura::~Sakura() {
     delete &this->_pic;
 }
 
-SakuraPicture *Sakura::Scale(int outWidth, int outHeight, int scaleMode) {
+SakuraPicture *Sakura::Scale(int outWidth, int outHeight, SakuraScaleFilter scaleMode) {
     // ignore message: Warning: data is not aligned! This can lead to a speedloss
     av_log_set_level(AV_LOG_ERROR);
 

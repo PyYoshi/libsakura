@@ -65,7 +65,7 @@ class SakuraPicture {
 class Sakura {
     public:
         Sakura(const char * filePath);
-        SakuraPicture * Scale(int outWidth, int outHeight, int scaleMode);
+        SakuraPicture * Scale(int outWidth, int outHeight, SakuraScaleFilter scaleMode);
         static void OutputBitmap(const char * filePath, SakuraPicture * pic);
         static void OutputPng(const char * filePath, SakuraPicture * pic);
         static void OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality);
