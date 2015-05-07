@@ -219,7 +219,59 @@ void Sakura::loadJpeg(const char * filePath){
 }
 
 void Sakura::loadWebp(const char * filePath){
-    throw "Function not yet implemented.";
+    FILE* fp = fopen(filePath, "rb");
+    if (fp != NULL) {
+        fseek(fp, 0L, SEEK_END);
+        unsigned long fileSize = (unsigned)ftell(fp);
+        fseek(fp, 0L, SEEK_SET);
+        unsigned char * fileBuffer = new unsigned char[fileSize];
+
+        fread(fileBuffer, fileSize, 1, fp);
+        fclose(fp);
+
+        WebPBitstreamFeatures * webpFeature = new WebPBitstreamFeatures();
+        VP8StatusCode gRet = WebPGetFeatures(fileBuffer, fileSize, webpFeature);
+        if (gRet == VP8_STATUS_OK) {
+            if (webpFeature->has_animation == 1) {
+                std::string msg = "Unsupported WebP animation mode: ";
+                msg += filePath;
+                delete[] fileBuffer; fileBuffer = NULL;
+                delete webpFeature; webpFeature = NULL;
+                throw SakuraException(msg);
+            }
+
+            int stride = 0;
+            if (webpFeature->has_alpha == 1) {
+                this->_pic->rgba = WebPDecodeRGBA(fileBuffer, fileSize, &this->_pic->width, &this->_pic->height);
+                this->_pic->hasAlpha = true;
+                stride = this->_pic->width * 4;
+            } else {
+                this->_pic->rgba = WebPDecodeRGB(fileBuffer, fileSize, &this->_pic->width, &this->_pic->height);
+                this->_pic->hasAlpha = false;
+                stride = this->_pic->width * 3;
+            }
+            this->_pic->stride = stride;
+
+            if (this->_pic->rgba == NULL) {
+                std::string msg = "Invalid WebP format: ";
+                msg += filePath;
+                delete[] fileBuffer; fileBuffer = NULL;
+                delete webpFeature; webpFeature = NULL;
+                throw SakuraException(msg);
+            }
+            delete[] fileBuffer; fileBuffer = NULL;
+        } else {
+            std::string msg = "Invalid WebP format: ";
+            msg += filePath;
+            delete[] fileBuffer; fileBuffer = NULL;
+            delete webpFeature; webpFeature = NULL;
+            throw SakuraException(msg);
+        };
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        throw SakuraException(msg);
+    }
 }
 
 void Sakura::OutputBitmap(const char * filePath, SakuraPicture * pic) {
@@ -280,6 +332,29 @@ void Sakura::OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int
     }
 }
 
-void Sakura::OutputWebp(const char * filePath, SakuraPicture * pic) {
-    throw "Function not yet implemented.";
+void Sakura::OutputWebp(const char * filePath, SakuraPicture * pic, unsigned int quality) {
+    unsigned char * webpBuffer = NULL;
+    size_t buffSize = 0;
+    if (pic->hasAlpha) {
+        buffSize = WebPEncodeRGBA(pic->rgba, pic->width, pic->height, pic->stride, quality, &webpBuffer);
+    } else {
+        buffSize = WebPEncodeRGB(pic->rgba, pic->width, pic->height, pic->stride, quality, &webpBuffer);
+    }
+
+    if (buffSize == 0) {
+        std::string msg = "WebP encode error";
+        throw SakuraException(msg);
+    }
+
+    FILE *fp = fopen(filePath, "wb");
+    if (fp != NULL) {
+        fwrite(webpBuffer, buffSize, 1, fp);
+        fclose(fp);
+        delete[] webpBuffer; webpBuffer = NULL;
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        delete[] webpBuffer; webpBuffer = NULL;
+        throw SakuraException(msg);
+    }
 }
