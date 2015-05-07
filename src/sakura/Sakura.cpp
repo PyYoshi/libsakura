@@ -103,6 +103,28 @@ Sakura::Sakura(const char *filePath) {
     }
 }
 
+Sakura::Sakura(SakuraPictureType type, unsigned char * buffer, unsigned long * bufSize) {
+    switch (type) {
+        case SakuraPictureType::BITMAP :
+            this->loadBitmap(buffer, bufSize);
+            break;
+        case SakuraPictureType::PNG :
+            this->loadPng(buffer, bufSize);
+            break;
+        case SakuraPictureType::JPEG :
+            this->loadJpeg(buffer, bufSize);
+            break;
+        case SakuraPictureType::WEBP :
+            this->loadWebp(buffer, bufSize);
+            break;
+        case SakuraPictureType::GIF :
+            this->loadGif(buffer, bufSize);
+            break;
+        default:
+            throw SakuraException("Unsupported image format");
+    }
+}
+
 Sakura::~Sakura() {
     delete &this->_pic;
 }
@@ -142,6 +164,10 @@ void Sakura::loadBitmap(const char *filePath) {
     throw "Function not yet implemented.";
 }
 
+void Sakura::loadBitmap(unsigned char * inputBuffer, unsigned long * bufSize) {
+    throw "Function not yet implemented.";
+}
+
 void Sakura::loadPng(const char *filePath) {
     png_image png;
     volatile png_structp png2;
@@ -175,6 +201,10 @@ void Sakura::loadPng(const char *filePath) {
     }
 
     png_image_free(&png);
+}
+
+void Sakura::loadPng(unsigned char * inputBuffer, unsigned long * bufSize) {
+    throw "Function not yet implemented.";
 }
 
 void Sakura::loadJpeg(const char *filePath) {
@@ -222,6 +252,10 @@ void Sakura::loadJpeg(const char *filePath) {
         msg += filePath;
         throw SakuraException(msg);
     }
+}
+
+void Sakura::loadJpeg(unsigned char * inputBuffer, unsigned long * bufSize) {
+    throw "Function not yet implemented.";
 }
 
 void Sakura::loadWebp(const char *filePath) {
@@ -279,6 +313,10 @@ void Sakura::loadWebp(const char *filePath) {
         msg += filePath;
         throw SakuraException(msg);
     }
+}
+
+void Sakura::loadWebp(unsigned char * inputBuffer, unsigned long * bufSize) {
+    throw "Function not yet implemented.";
 }
 
 typedef struct {
@@ -384,7 +422,15 @@ void Sakura::loadGif(const char *filePath) {
     }
 }
 
+void Sakura::loadGif(unsigned char * inputBuffer, unsigned long * bufSize) {
+    throw "Function not yet implemented.";
+}
+
 void Sakura::OutputBitmap(const char *filePath, SakuraPicture *pic) {
+    throw "Function not yet implemented.";
+}
+
+void Sakura::OutputBitmap(unsigned char ** outputBuffer, SakuraPicture *pic) {
     throw "Function not yet implemented.";
 }
 
@@ -409,6 +455,10 @@ void Sakura::OutputPng(const char *filePath, SakuraPicture *pic) {
         throw std::runtime_error(png.message);
     }
     png_image_free(&png);
+}
+
+void Sakura::OutputPng(unsigned char ** outputBuffer, SakuraPicture *pic) {
+    throw "Function not yet implemented.";
 }
 
 void Sakura::OutputJpeg(const char *filePath, SakuraPicture *pic, unsigned int quality) {
@@ -449,6 +499,10 @@ void Sakura::OutputJpeg(const char *filePath, SakuraPicture *pic, unsigned int q
     }
 }
 
+void Sakura::OutputJpeg(unsigned char ** outputBuffer, SakuraPicture *pic, unsigned int quality) {
+    throw "Function not yet implemented.";
+}
+
 void Sakura::OutputWebp(const char *filePath, SakuraPicture *pic, unsigned int quality) {
     unsigned char *webpBuffer = NULL;
     size_t buffSize = 0;
@@ -476,6 +530,14 @@ void Sakura::OutputWebp(const char *filePath, SakuraPicture *pic, unsigned int q
     }
 }
 
+void Sakura::OutputWebp(unsigned char ** outputBuffer, SakuraPicture *pic, unsigned int quality) {
+    throw "Function not yet implemented.";
+}
+
 void Sakura::OutputGif(const char *filePath, SakuraPicture *pic) {
+    throw "Function not yet implemented.";
+}
+
+void Sakura::OutputGif(unsigned char ** outputBuffer, SakuraPicture *pic) {
     throw "Function not yet implemented.";
 }
