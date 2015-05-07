@@ -64,6 +64,8 @@ SakuraPictureType SakuraUtils::GetType(std::string ext) {
         return SakuraPictureType::JPEG;
     } else if (ext == "webp") {
         return SakuraPictureType::WEBP;
+    } else if (ext == "gif") {
+        return SakuraPictureType::GIF;
     } else {
         return SakuraPictureType::UNKNOWN;
     }
