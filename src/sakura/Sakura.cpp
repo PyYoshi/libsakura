@@ -29,6 +29,11 @@ typedef struct {
     size_t read;
 } PngHelperReadCbData;
 
+typedef struct {
+    unsigned char * src;
+    size_t size;
+} PngHelperWriteCbData;
+
 int GifHelperByteBufferReadFun(GifFileType* gif, GifByteType* bytes, int size) {
     GifHelperReadCbData* cbData = (GifHelperReadCbData*) gif->UserData;
     if (cbData->read + size > cbData->size) {
@@ -50,6 +55,22 @@ void PngHelperByteBufferReadFun(png_structp png_ptr, png_bytep data, png_size_t 
     memcpy(data, cbData->src + cbData->read, size);
     cbData->read += size;
     return;
+}
+
+void PngHelperByteBufferWriteFun(png_structp png_ptr, png_bytep data, png_size_t size) {
+    PngHelperWriteCbData * cbData = (PngHelperWriteCbData *) png_get_io_ptr(png_ptr);
+    size_t totalSize = cbData->size + size;
+    if (cbData->src) {
+        cbData->src = (unsigned char *) realloc(cbData->src, totalSize * sizeof(unsigned char));
+    } else {
+        cbData->src = (unsigned char *) malloc(totalSize * sizeof(unsigned char));
+    }
+    if (!cbData->src) {
+        png_error(png_ptr, "Out of memory");
+        return;
+    }
+    memcpy(cbData->src + cbData->size, data, size);
+    cbData->size += size;
 }
 
 std::string Sakura::Utils::GetFileName(const char *filePath) {
@@ -535,43 +556,109 @@ void Sakura::OutputBitmap(const char *filePath, Sakura::Picture *pic) {
     throw "Function not yet implemented.";
 }
 
-void Sakura::OutputBitmap(unsigned char ** outputBuffer, Sakura::Picture *pic) {
+unsigned long Sakura::OutputBitmap(unsigned char ** outputBuffer, Sakura::Picture *pic) {
     throw "Function not yet implemented.";
 }
 
-void Sakura::OutputPng(const char *filePath, Sakura::Picture *pic) {
-    png_image png;
-    memset(&png, 0, sizeof(png));
-    png.version = PNG_IMAGE_VERSION;
+void Sakura::OutputPng(const char *filePath, Sakura::Picture *pic, int compLevel) {
+    unsigned char *pngBuf = NULL;
+    unsigned long pngSize = Sakura::OutputPng(&pngBuf, pic, compLevel);
 
-    png.width = pic->width;
-    png.height = pic->height;
-
-    if (pic->hasAlpha) {
-        png.format = PNG_FORMAT_RGBA;
+    FILE *fp = fopen(filePath, "wb");
+    if (fp != NULL) {
+        fwrite(pngBuf, pngSize, 1, fp);
+        fclose(fp);
     } else {
-        png.format = PNG_FORMAT_RGB;
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        throw Sakura::Exception(msg);
     }
-
-    uint32_t stride = PNG_IMAGE_ROW_STRIDE(png);
-
-    png_image_write_to_file(&png, filePath, 0, pic->rgba, stride, NULL);
-    if (PNG_IMAGE_FAILED(png)) {
-        throw std::runtime_error(png.message);
-    }
-    png_image_free(&png);
 }
 
-void Sakura::OutputPng(unsigned char ** outputBuffer, Sakura::Picture *pic) {
-    throw "Function not yet implemented.";
+unsigned long Sakura::OutputPng(unsigned char ** outputBuffer, Sakura::Picture *pic, int compLevel) {
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+    if (!png_ptr) {
+        throw Sakura::Exception("Out of memory");
+    }
+
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (!info_ptr) {
+        png_destroy_write_struct(&png_ptr, NULL);
+        throw Sakura::Exception("Out of memory");
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        throw Sakura::Exception("PNG compression error");
+    }
+
+    png_bytep * const rowPnts = new png_bytep[pic->height];
+    if (!rowPnts) {
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        throw Sakura::Exception("Out of memory");
+    }
+    for (unsigned int row = 0; row < pic->height; row++) {
+        rowPnts[row] = new png_byte[pic->stride];
+        if (!rowPnts[row]) {
+            for (unsigned int p = 0 ; p < row ; p++) delete[] rowPnts[p];
+            delete[] rowPnts;
+            png_destroy_write_struct(&png_ptr, &info_ptr);
+            throw Sakura::Exception("Out of memory");
+        }
+    }
+
+    png_set_IHDR(png_ptr, info_ptr, (png_uint_32)pic->width, (png_uint_32)pic->height, 8, pic->hasAlpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+    png_set_compression_level(png_ptr, compLevel);
+
+    PngHelperWriteCbData cbData = {NULL, 0};
+    png_set_write_fn(png_ptr, (voidp) &cbData, PngHelperByteBufferWriteFun, NULL);
+
+    for(int h=0; h < pic->height; h++){
+        for(int w=0; w < pic->width; w++){
+            if (pic->hasAlpha) {
+                rowPnts[h][(w * 4) + 0] = pic->rgba[(h * w) + 0];
+                rowPnts[h][(w * 4) + 1] = pic->rgba[(h * w) + 1];
+                rowPnts[h][(w * 4) + 2] = pic->rgba[(h * w) + 2];
+                rowPnts[h][(w * 4) + 3] = pic->rgba[(h * w) + 3];
+            } else {
+                rowPnts[h][(w * 3) + 0] = pic->rgba[(h * w) + 0];
+                rowPnts[h][(w * 3) + 1] = pic->rgba[(h * w) + 1];
+                rowPnts[h][(w * 3) + 2] = pic->rgba[(h * w) + 2];
+            };
+        }
+    }
+
+    png_set_rows(png_ptr, info_ptr, rowPnts);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    for (unsigned int r = 0; r < pic->height; r++) delete[] rowPnts[r];
+    delete[] rowPnts;
+
+    outputBuffer = &cbData.src;
+    return cbData.size;
 }
 
 void Sakura::OutputJpeg(const char *filePath, Sakura::Picture *pic, unsigned int quality) {
-    tjhandle jpegHandle = tjInitCompress();
-
     unsigned char *jpegBuf = NULL;
-    unsigned long jpegSize = 0;
+    unsigned long jpegSize = Sakura::OutputJpeg(&jpegBuf, pic, quality);
 
+    FILE *fp = fopen(filePath, "wb");
+    if (fp != NULL) {
+        fwrite(jpegBuf, jpegSize, 1, fp);
+        fclose(fp);
+    } else {
+        std::string msg = "Could not open file: ";
+        msg += filePath;
+        throw Sakura::Exception(msg);
+    }
+}
+
+unsigned long Sakura::OutputJpeg(unsigned char ** outputBuffer, Sakura::Picture *pic, unsigned int quality) {
+    unsigned long jpegSize = 0;
+    tjhandle jpegHandle = tjInitCompress();
     TJPF format;
     if (pic->hasAlpha) {
         format = TJPF_RGBA;
@@ -580,47 +667,22 @@ void Sakura::OutputJpeg(const char *filePath, Sakura::Picture *pic, unsigned int
     }
 
     const int result = tjCompress2(jpegHandle, pic->rgba, pic->width, pic->stride, pic->height, format,
-                                   &jpegBuf, &jpegSize, TJSAMP_444, quality, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
+                                   outputBuffer, &jpegSize, TJSAMP_444, quality, TJFLAG_FASTUPSAMPLE | TJFLAG_FASTDCT);
     if (result != 0) {
         std::string msg = "Failed while tjCompress2: ";
         msg += tjGetErrorStr();
-        tjFree(jpegBuf);
         tjDestroy(jpegHandle);
         throw Sakura::Exception(msg);
     }
 
-    FILE *fp = fopen(filePath, "wb");
-    if (fp != NULL) {
-        fwrite(jpegBuf, jpegSize, 1, fp);
-        fclose(fp);
-        tjFree(jpegBuf);
-        tjDestroy(jpegHandle);
-    } else {
-        std::string msg = "Could not open file: ";
-        msg += filePath;
-        tjFree(jpegBuf);
-        tjDestroy(jpegHandle);
-        throw Sakura::Exception(msg);
-    }
-}
+    tjDestroy(jpegHandle);
 
-void Sakura::OutputJpeg(unsigned char ** outputBuffer, Sakura::Picture *pic, unsigned int quality) {
-    throw "Function not yet implemented.";
+    return jpegSize;
 }
 
 void Sakura::OutputWebp(const char *filePath, Sakura::Picture *pic, unsigned int quality) {
     unsigned char *webpBuffer = NULL;
-    size_t buffSize = 0;
-    if (pic->hasAlpha) {
-        buffSize = WebPEncodeRGBA(pic->rgba, pic->width, pic->height, pic->stride, quality, &webpBuffer);
-    } else {
-        buffSize = WebPEncodeRGB(pic->rgba, pic->width, pic->height, pic->stride, quality, &webpBuffer);
-    }
-
-    if (buffSize == 0) {
-        std::string msg = "WebP encode error";
-        throw Sakura::Exception(msg);
-    }
+    size_t buffSize = Sakura::OutputWebp(&webpBuffer, pic, quality);
 
     FILE *fp = fopen(filePath, "wb");
     if (fp != NULL) {
@@ -635,14 +697,26 @@ void Sakura::OutputWebp(const char *filePath, Sakura::Picture *pic, unsigned int
     }
 }
 
-void Sakura::OutputWebp(unsigned char ** outputBuffer, Sakura::Picture *pic, unsigned int quality) {
-    throw "Function not yet implemented.";
+unsigned long Sakura::OutputWebp(unsigned char ** outputBuffer, Sakura::Picture *pic, unsigned int quality) {
+    size_t buffSize = 0;
+    if (pic->hasAlpha) {
+        buffSize = WebPEncodeRGBA(pic->rgba, pic->width, pic->height, pic->stride, quality, outputBuffer);
+    } else {
+        buffSize = WebPEncodeRGB(pic->rgba, pic->width, pic->height, pic->stride, quality, outputBuffer);
+    }
+
+    if (buffSize == 0) {
+        std::string msg = "WebP encode error";
+        throw Sakura::Exception(msg);
+    }
+
+    return buffSize;
 }
 
 void Sakura::OutputGif(const char *filePath, Sakura::Picture *pic) {
     throw "Function not yet implemented.";
 }
 
-void Sakura::OutputGif(unsigned char ** outputBuffer, Sakura::Picture *pic) {
+unsigned long Sakura::OutputGif(unsigned char ** outputBuffer, Sakura::Picture *pic) {
     throw "Function not yet implemented.";
 }

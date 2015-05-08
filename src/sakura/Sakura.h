@@ -76,15 +76,15 @@ namespace Sakura {
     Picture * LoadGif(unsigned char * inputBuffer, unsigned long * bufSize);
 
     void OutputBitmap(const char * filePath, Picture * pic);
-    void OutputBitmap(unsigned char ** outputBuffer, Picture * pic);
-    void OutputPng(const char * filePath, Picture * pic);
-    void OutputPng(unsigned char ** outputBuffer, Picture * pic);
+    unsigned long OutputBitmap(unsigned char ** outputBuffer, Picture * pic);
+    void OutputPng(const char * filePath, Picture * pic, int compLevel);
+    unsigned long OutputPng(unsigned char ** outputBuffer, Picture * pic, int compLevel);
     void OutputJpeg(const char * filePath, Picture * pic, unsigned int quality);
-    void OutputJpeg(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
+    unsigned long OutputJpeg(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
     void OutputWebp(const char * filePath, Picture * pic, unsigned int quality);
-    void OutputWebp(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
+    unsigned long OutputWebp(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
     void OutputGif(const char * filePath, Picture * pic);
-    void OutputGif(unsigned char ** outputBuffer, Picture * pic);
+    unsigned long OutputGif(unsigned char ** outputBuffer, Picture * pic);
 }
 
 #endif //SAKURA_SAKURA_H
