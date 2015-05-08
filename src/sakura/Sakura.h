@@ -5,90 +5,86 @@
 #include <string>
 #include <exception>
 
-class SakuraException: public std::exception
-{
-public:
-    explicit SakuraException(const char* message): msg_(message) {}
-    explicit SakuraException(const std::string& message): msg_(message) {}
-    virtual ~SakuraException() throw (){}
+namespace Sakura {
+    class Exception: public std::exception
+    {
+        public:
+            explicit Exception(const char* message): msg_(message) {}
+            explicit Exception(const std::string& message): msg_(message) {}
+            virtual ~Exception() throw (){}
 
-    virtual const char* what() const throw (){
-        return msg_.c_str();
-    }
+            virtual const char* what() const throw (){
+                return msg_.c_str();
+            }
 
-protected:
-    std::string msg_;
-};
+        protected:
+            std::string msg_;
+    };
 
-enum SakuraPictureType {
-    BITMAP,
-    PNG,
-    JPEG,
-    WEBP,
-    GIF,
-    UNKNOWN
-};
+    enum PictureType {
+        BITMAP,
+        PNG,
+        JPEG,
+        WEBP,
+        GIF,
+        UNKNOWN
+    };
 
-enum SakuraScaleFilter {
-    FAST_BILINEAR = 1,
-    BILINEAR = 2,
-    BICUBIC = 4,
-    X = 8,
-    POINT = 0x10,
-    AREA = 0x20,
-    BICUBLIN = 0x40,
-    GAUSS = 0x80,
-    SINC = 0x100,
-    LANCZOS = 0x200,
-    SPLINE = 0x400,
-};
+    enum ScaleFilter {
+        FAST_BILINEAR = 1,
+        BILINEAR = 2,
+        BICUBIC = 4,
+        X = 8,
+        POINT = 0x10,
+        AREA = 0x20,
+        BICUBLIN = 0x40,
+        GAUSS = 0x80,
+        SINC = 0x100,
+        LANCZOS = 0x200,
+        SPLINE = 0x400,
+    };
 
-class SakuraUtils {
-    public:
-        static std::string GetFileName(const char * filePath);
-        static std::string GetExt(std::string fileName);
-        static SakuraPictureType GetType(std::string ext);
-};
+    class Utils {
+        public:
+            static std::string GetFileName(const char * filePath);
+            static std::string GetExt(std::string fileName);
+            static PictureType GetType(std::string ext);
+    };
 
-class SakuraPicture {
-    public:
-        ~SakuraPicture();
+    class Picture {
+        public:
+            ~Picture();
 
-        int width;
-        int height;
-        int stride;
-        unsigned char *rgba;
-        bool hasAlpha;
-};
+            int width;
+            int height;
+            int stride;
+            unsigned char *rgba;
+            bool hasAlpha;
+    };
 
-class Sakura {
-    public:
-        Sakura();
-        ~Sakura();
+    Picture * Scale(Picture * pic, int outWidth, int outHeight, ScaleFilter scaleMode);
+    Picture * LoadFromFile(const char * filePath);
+    Picture * LoadBitmap(const char * filePath);
+    Picture * LoadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
+    Picture * LoadPng(const char * filePath);
+    Picture * LoadPng(unsigned char * inputBuffer, unsigned long * bufSize);
+    Picture * LoadJpeg(const char * filePath);
+    Picture * LoadJpeg(unsigned char * inputBuffer, unsigned long * bufSize);
+    Picture * LoadWebp(const char * filePath);
+    Picture * LoadWebp(unsigned char * inputBuffer, unsigned long * bufSize);
+    Picture * LoadGif(const char * filePath);
+    Picture * LoadGif(unsigned char * inputBuffer, unsigned long * bufSize);
 
-        static SakuraPicture * Scale(SakuraPicture * pic, int outWidth, int outHeight, SakuraScaleFilter scaleMode);
-        static SakuraPicture * LoadFromFile(const char * filePath);
-        static SakuraPicture * LoadBitmap(const char * filePath);
-        static SakuraPicture * LoadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
-        static SakuraPicture * LoadPng(const char * filePath);
-        static SakuraPicture * LoadPng(unsigned char * inputBuffer, unsigned long * bufSize);
-        static SakuraPicture * LoadJpeg(const char * filePath);
-        static SakuraPicture * LoadJpeg(unsigned char * inputBuffer, unsigned long * bufSize);
-        static SakuraPicture * LoadWebp(const char * filePath);
-        static SakuraPicture * LoadWebp(unsigned char * inputBuffer, unsigned long * bufSize);
-        static SakuraPicture * LoadGif(const char * filePath);
-        static SakuraPicture * LoadGif(unsigned char * inputBuffer, unsigned long * bufSize);
-
-        static void OutputBitmap(const char * filePath, SakuraPicture * pic);
-        static void OutputBitmap(unsigned char ** outputBuffer, SakuraPicture * pic);
-        static void OutputPng(const char * filePath, SakuraPicture * pic);
-        static void OutputPng(unsigned char ** outputBuffer, SakuraPicture * pic);
-        static void OutputJpeg(const char * filePath, SakuraPicture * pic, unsigned int quality);
-        static void OutputJpeg(unsigned char ** outputBuffer, SakuraPicture * pic, unsigned int quality);
-        static void OutputWebp(const char * filePath, SakuraPicture * pic, unsigned int quality);
-        static void OutputWebp(unsigned char ** outputBuffer, SakuraPicture * pic, unsigned int quality);
-        static void OutputGif(const char * filePath, SakuraPicture * pic);
-        static void OutputGif(unsigned char ** outputBuffer, SakuraPicture * pic);
-};
+    void OutputBitmap(const char * filePath, Picture * pic);
+    void OutputBitmap(unsigned char ** outputBuffer, Picture * pic);
+    void OutputPng(const char * filePath, Picture * pic);
+    void OutputPng(unsigned char ** outputBuffer, Picture * pic);
+    void OutputJpeg(const char * filePath, Picture * pic, unsigned int quality);
+    void OutputJpeg(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
+    void OutputWebp(const char * filePath, Picture * pic, unsigned int quality);
+    void OutputWebp(unsigned char ** outputBuffer, Picture * pic, unsigned int quality);
+    void OutputGif(const char * filePath, Picture * pic);
+    void OutputGif(unsigned char ** outputBuffer, Picture * pic);
+}
 
 #endif //SAKURA_SAKURA_H
