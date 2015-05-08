@@ -52,20 +52,21 @@ class SakuraUtils {
 
 class SakuraPicture {
     public:
+        ~SakuraPicture();
+
         int width;
         int height;
         int stride;
         unsigned char *rgba;
         bool hasAlpha;
-
-    private:
-        ~SakuraPicture();
 };
 
 class Sakura {
     public:
         Sakura(const char * filePath);
         Sakura(SakuraPictureType type, unsigned char * buffer, unsigned long * bufSize);
+        ~Sakura();
+
         SakuraPicture * Scale(int outWidth, int outHeight, SakuraScaleFilter scaleMode);
         static void OutputBitmap(const char * filePath, SakuraPicture * pic);
         static void OutputBitmap(unsigned char ** outputBuffer, SakuraPicture * pic);
@@ -80,8 +81,6 @@ class Sakura {
 
     private:
         SakuraPicture * _pic;
-
-        ~Sakura();
 
         void loadBitmap(const char * filePath);
         void loadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
