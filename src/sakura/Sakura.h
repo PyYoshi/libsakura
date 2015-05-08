@@ -63,7 +63,7 @@ class SakuraPicture {
 
 class Sakura {
     public:
-        Sakura(const char * filePath);
+        explicit Sakura(const char * filePath);
         Sakura(SakuraPictureType type, unsigned char * buffer, unsigned long * bufSize);
         ~Sakura();
 
