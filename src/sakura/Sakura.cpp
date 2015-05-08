@@ -302,40 +302,32 @@ Sakura::Picture * Sakura::LoadPng(unsigned char * inputBuffer, unsigned long * b
 
     png_read_update_info(png_ptr, info_ptr);
 
-    png_bytep * const imgData = new png_bytep[height];
-    for (unsigned int row = 0; row < height; row++)
-        imgData[row] = new png_byte[4 * width];
-
-    png_read_image(png_ptr, imgData);
-    png_read_end(png_ptr, end_info);
-
     pic->width = width;
     pic->height = height;
-    pic->hasAlpha = hasAlpha;
-    if (hasAlpha) {
-        pic->stride = width * 4;
-    } else {
-        pic->stride = width * 3;
-    }
-    pic->rgba = new unsigned char[height * pic->stride];
+    pic->hasAlpha = true;
+    pic->stride = width * 4;
 
-    for(int h=0; h<height; h++){
-        for(int w=0; w<width; w++){
-            if(colorType == PNG_COLOR_TYPE_RGBA){
-                pic->rgba[(h * w) + 0] = imgData[h][(w * 4) + 0];
-                pic->rgba[(h * w) + 1] = imgData[h][(w * 4) + 1];
-                pic->rgba[(h * w) + 2] = imgData[h][(w * 4) + 2];
-                pic->rgba[(h * w) + 3] = imgData[h][(w * 4) + 3];
-            } else {
-                pic->rgba[(h * w) + 0] = imgData[h][(w * 3) + 0];
-                pic->rgba[(h * w) + 1] = imgData[h][(w * 3) + 1];
-                pic->rgba[(h * w) + 2] = imgData[h][(w * 3) + 2];
-            }
-        }
-        delete[] imgData[h];
+    pic->rgba = new unsigned char[pic->height * pic->stride];
+    if(!pic->rgba)
+    {
+        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+        throw Sakura::Exception("Out of memory");
     }
-    delete[] imgData;
 
+    png_bytep* rowsPtr = new png_bytep[height];
+    if(!rowsPtr)
+    {
+        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+        throw Sakura::Exception("Out of memory");
+    }
+
+    for (int i = 0; i < height; ++i)
+        rowsPtr[i] = &pic->rgba[i * pic->stride];
+
+    png_read_image(png_ptr, rowsPtr);
+    png_read_end(png_ptr, end_info);
+
+    delete[] rowsPtr;
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
     return pic;
