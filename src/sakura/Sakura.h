@@ -63,11 +63,22 @@ class SakuraPicture {
 
 class Sakura {
     public:
-        explicit Sakura(const char * filePath);
-        Sakura(SakuraPictureType type, unsigned char * buffer, unsigned long * bufSize);
+        Sakura();
         ~Sakura();
 
-        SakuraPicture * Scale(int outWidth, int outHeight, SakuraScaleFilter scaleMode);
+        static SakuraPicture * Scale(SakuraPicture * pic, int outWidth, int outHeight, SakuraScaleFilter scaleMode);
+        static SakuraPicture * LoadFromFile(const char * filePath);
+        static SakuraPicture * LoadBitmap(const char * filePath);
+        static SakuraPicture * LoadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
+        static SakuraPicture * LoadPng(const char * filePath);
+        static SakuraPicture * LoadPng(unsigned char * inputBuffer, unsigned long * bufSize);
+        static SakuraPicture * LoadJpeg(const char * filePath);
+        static SakuraPicture * LoadJpeg(unsigned char * inputBuffer, unsigned long * bufSize);
+        static SakuraPicture * LoadWebp(const char * filePath);
+        static SakuraPicture * LoadWebp(unsigned char * inputBuffer, unsigned long * bufSize);
+        static SakuraPicture * LoadGif(const char * filePath);
+        static SakuraPicture * LoadGif(unsigned char * inputBuffer, unsigned long * bufSize);
+
         static void OutputBitmap(const char * filePath, SakuraPicture * pic);
         static void OutputBitmap(unsigned char ** outputBuffer, SakuraPicture * pic);
         static void OutputPng(const char * filePath, SakuraPicture * pic);
@@ -78,20 +89,6 @@ class Sakura {
         static void OutputWebp(unsigned char ** outputBuffer, SakuraPicture * pic, unsigned int quality);
         static void OutputGif(const char * filePath, SakuraPicture * pic);
         static void OutputGif(unsigned char ** outputBuffer, SakuraPicture * pic);
-
-    private:
-        SakuraPicture * _pic;
-
-        void loadBitmap(const char * filePath);
-        void loadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
-        void loadPng(const char * filePath);
-        void loadPng(unsigned char * inputBuffer, unsigned long * bufSize);
-        void loadJpeg(const char * filePath);
-        void loadJpeg(unsigned char * inputBuffer, unsigned long * bufSize);
-        void loadWebp(const char * filePath);
-        void loadWebp(unsigned char * inputBuffer, unsigned long * bufSize);
-        void loadGif(const char * filePath);
-        void loadGif(unsigned char * inputBuffer, unsigned long * bufSize);
 };
 
 #endif //SAKURA_SAKURA_H
