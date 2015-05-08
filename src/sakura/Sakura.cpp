@@ -154,7 +154,7 @@ SakuraPicture *Sakura::Scale(int outWidth, int outHeight, SakuraScaleFilter scal
     oPic->rgba = new unsigned char[oPic->height * oPic->stride];
     oPic->hasAlpha = this->_pic->hasAlpha;
 
-    sws_scale(scaler, &this->_pic->rgba, &this->_pic->stride, 0, this->_pic->height, &oPic->rgba, &oPic->stride);
+    sws_scale(scaler, (const unsigned char * const*)&this->_pic->rgba, &this->_pic->stride, 0, this->_pic->height, &oPic->rgba, &oPic->stride);
 
     sws_freeContext(scaler);
     return oPic;
