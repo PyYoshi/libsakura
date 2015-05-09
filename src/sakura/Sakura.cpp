@@ -585,21 +585,6 @@ unsigned long Sakura::OutputPng(unsigned char ** outputBuffer, Sakura::Picture *
         throw Sakura::Exception("PNG compression error");
     }
 
-    png_bytep * const rowPnts = new png_bytep[pic->height];
-    if (!rowPnts) {
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        throw Sakura::Exception("Out of memory");
-    }
-    for (unsigned int row = 0; row < pic->height; row++) {
-        rowPnts[row] = new png_byte[pic->stride];
-        if (!rowPnts[row]) {
-            for (unsigned int p = 0 ; p < row ; p++) delete[] rowPnts[p];
-            delete[] rowPnts;
-            png_destroy_write_struct(&png_ptr, &info_ptr);
-            throw Sakura::Exception("Out of memory");
-        }
-    }
-
     png_set_IHDR(png_ptr, info_ptr, (png_uint_32)pic->width, (png_uint_32)pic->height, 8, pic->hasAlpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
     png_set_compression_level(png_ptr, compLevel);
@@ -607,27 +592,17 @@ unsigned long Sakura::OutputPng(unsigned char ** outputBuffer, Sakura::Picture *
     PngHelperWriteCbData cbData = {NULL, 0};
     png_set_write_fn(png_ptr, (voidp) &cbData, PngHelperByteBufferWriteFun, NULL);
 
-    for(int h=0; h < pic->height; h++){
-        for(int w=0; w < pic->width; w++){
-            if (pic->hasAlpha) {
-                rowPnts[h][(w * 4) + 0] = pic->rgba[(h * w) + 0];
-                rowPnts[h][(w * 4) + 1] = pic->rgba[(h * w) + 1];
-                rowPnts[h][(w * 4) + 2] = pic->rgba[(h * w) + 2];
-                rowPnts[h][(w * 4) + 3] = pic->rgba[(h * w) + 3];
-            } else {
-                rowPnts[h][(w * 3) + 0] = pic->rgba[(h * w) + 0];
-                rowPnts[h][(w * 3) + 1] = pic->rgba[(h * w) + 1];
-                rowPnts[h][(w * 3) + 2] = pic->rgba[(h * w) + 2];
-            };
-        }
+    unsigned char ** rows = (unsigned char**) new unsigned char*[pic->height];
+    for(int i = 0; i < pic->height; i++)
+    {
+        rows[i]=pic->rgba + i * pic->stride;
     }
+    png_set_rows(png_ptr,info_ptr,rows);
 
-    png_set_rows(png_ptr, info_ptr, rowPnts);
     png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
+    delete[] rows;
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    for (unsigned int r = 0; r < pic->height; r++) delete[] rowPnts[r];
-    delete[] rowPnts;
 
     *outputBuffer = cbData.src;
     return cbData.size;
