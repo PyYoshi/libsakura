@@ -4,3 +4,12 @@
 /cmake_install.cmake
 /Makefile
 /*-prefix/
+/sakura
+/sakura.dSYM/
+/*.png
+/*.gif
+/*.jpg
+/*.webp
+/root
+/*.a
+/*.dylib
