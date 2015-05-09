@@ -641,9 +641,11 @@ void Sakura::OutputJpeg(const char *filePath, Sakura::Picture *pic, unsigned int
     if (fp != NULL) {
         fwrite(jpegBuf, jpegSize, 1, fp);
         fclose(fp);
+        delete[] jpegBuf;
     } else {
         std::string msg = "Could not open file: ";
         msg += filePath;
+        delete[] jpegBuf;
         throw Sakura::Exception(msg);
     }
 }
