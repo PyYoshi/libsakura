@@ -629,7 +629,7 @@ unsigned long Sakura::OutputPng(unsigned char ** outputBuffer, Sakura::Picture *
     for (unsigned int r = 0; r < pic->height; r++) delete[] rowPnts[r];
     delete[] rowPnts;
 
-    outputBuffer = &cbData.src;
+    *outputBuffer = cbData.src;
     return cbData.size;
 }
 
