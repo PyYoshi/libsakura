@@ -560,9 +560,11 @@ void Sakura::OutputPng(const char *filePath, Sakura::Picture *pic, int compLevel
     if (fp != NULL) {
         fwrite(pngBuf, pngSize, 1, fp);
         fclose(fp);
+        delete[] pngBuf;
     } else {
         std::string msg = "Could not open file: ";
         msg += filePath;
+        delete[] pngBuf;
         throw Sakura::Exception(msg);
     }
 }
