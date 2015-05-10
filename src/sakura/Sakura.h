@@ -22,12 +22,12 @@ namespace Sakura {
     };
 
     enum PictureType {
-        BITMAP,
-        PNG,
-        JPEG,
-        WEBP,
-        GIF,
-        UNKNOWN
+        BITMAP=0x00,
+        PNG=0x01,
+        JPEG=0x02,
+        WEBP=0x03,
+        GIF=0x04,
+        UNKNOWN=0xff
     };
 
     enum ScaleFilter {
