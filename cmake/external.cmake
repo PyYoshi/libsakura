@@ -57,7 +57,7 @@ ExternalProject_Add(
 ExternalProject_Add(
 	LIBPNG
 	PREFIX					${THIRDPARTY_PREFIX_DIR}
-	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/libpng-1.6.9
+	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/libpng-1.6.17
 	BUILD_COMMAND         	make
 	INSTALL_COMMAND       	make install
 	CMAKE_CACHE_ARGS
