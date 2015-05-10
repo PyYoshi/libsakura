@@ -32,25 +32,25 @@ typedef struct sakura_picture_t sakura_picture_t;
 
 extern void sakura_free_picture(sakura_picture_t* pic);
 
-extern sakura_picture_t* sakura_scale(sakura_picture_t* in_pic, int out_width, int out_height, int scale_filter);
+extern sakura_picture_t* sakura_scale(sakura_picture_t* in_pic, int out_width, int out_height, int scale_filter, char** errptr);
 
-extern sakura_picture_t* sakura_load_png(unsigned char* input_buffer, unsigned long* buf_size);
-extern sakura_picture_t* sakura_load_png_file(const char* file_path);
+extern sakura_picture_t* sakura_load_png(unsigned char* input_buffer, unsigned long* buf_size, char** errptr);
+extern sakura_picture_t* sakura_load_png_file(const char* file_path, char** errptr);
 
-extern sakura_picture_t* sakura_load_jpeg(unsigned char* input_buffer, unsigned long* buf_size);
-extern sakura_picture_t* sakura_load_jpeg_file(const char* file_path);
+extern sakura_picture_t* sakura_load_jpeg(unsigned char* input_buffer, unsigned long* buf_size, char** errptr);
+extern sakura_picture_t* sakura_load_jpeg_file(const char* file_path, char** errptr);
 
-extern sakura_picture_t* sakura_load_webp(unsigned char* input_buffer, unsigned long* buf_size);
-extern sakura_picture_t* sakura_load_webp_file(const char* file_path);
+extern sakura_picture_t* sakura_load_webp(unsigned char* input_buffer, unsigned long* buf_size, char** errptr);
+extern sakura_picture_t* sakura_load_webp_file(const char* file_path, char** errptr);
 
-extern void sakura_output_png(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int comp_level);
-extern void sakura_output_png_file(const char* file_path, sakura_picture_t* in_pic, unsigned int comp_level);
+extern void sakura_output_png(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int comp_level, char** errptr);
+extern void sakura_output_png_file(const char* file_path, sakura_picture_t* in_pic, unsigned int comp_level, char** errptr);
 
-extern void sakura_output_jpeg(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int quality);
-extern void sakura_output_jpeg_file(const char* file_path, sakura_picture_t* in_pic, unsigned int quality);
+extern void sakura_output_jpeg(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int quality, char** errptr);
+extern void sakura_output_jpeg_file(const char* file_path, sakura_picture_t* in_pic, unsigned int quality, char** errptr);
 
-extern void sakura_output_webp(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int quality);
-extern void sakura_output_webp_file(const char* file_path, sakura_picture_t* in_pic, unsigned int quality);
+extern void sakura_output_webp(unsigned char ** out_buffer, sakura_picture_t* in_pic, unsigned int quality, char** errptr);
+extern void sakura_output_webp_file(const char* file_path, sakura_picture_t* in_pic, unsigned int quality, char** errptr);
 
 #ifdef __cplusplus
 }  /* end extern "C" */
