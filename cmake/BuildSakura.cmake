@@ -56,19 +56,19 @@ set_target_properties(
   PROPERTIES OUTPUT_NAME ${SAKURA_LIBRARY}
 )
 
-set_directory_properties(PROPERTIES
-    ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/libSakuraScaler.a
-)
-add_custom_command(
-    OUTPUT COMBINED_LIBSAKURA
-    COMMAND rm -f ${PROJECT_SOURCE_DIR}/libSakuraScaler.a
-    COMMAND ${CMAKE_AR} rc ${PROJECT_SOURCE_DIR}/libSakuraScaler.a ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES}
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "combined libsakura"
-)
-add_custom_target(combined_libsakura ALL
-  DEPENDS ${SAKURA_STATIC_LIBRARY} COMBINED_LIBSAKURA
-)
+#set_directory_properties(PROPERTIES
+#    ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/libSakuraScaler.a
+#)
+#add_custom_command(
+#    OUTPUT COMBINED_LIBSAKURA
+#    COMMAND rm -f ${PROJECT_SOURCE_DIR}/libSakuraScaler.a
+#    COMMAND ${CMAKE_AR} rc ${PROJECT_SOURCE_DIR}/libSakuraScaler.a ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES}
+#    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+#    COMMENT "combined libsakura"
+#)
+#add_custom_target(combined_libsakura ALL
+#  DEPENDS ${SAKURA_STATIC_LIBRARY} COMBINED_LIBSAKURA
+#)
 
 set(TEST_C_SOURCE_FILES ${LIBSAKURA_HOME}/test_c_sakura.c)
 add_executable(test_c_sakura ${TEST_C_SOURCE_FILES})
