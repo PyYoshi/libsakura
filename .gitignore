@@ -13,3 +13,5 @@
 /root
 /*.a
 /*.dylib
+/test_sakura
+/test_c_sakura
