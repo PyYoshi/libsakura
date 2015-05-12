@@ -131,6 +131,47 @@ Sakura::Picture::~Picture() {
     delete[]rgba;
 }
 
+#define alpha_composite(composite, fg, alpha, bg) \
+{ \
+unsigned short temp = ((unsigned short)(fg)*(unsigned short)(alpha) + \
+(unsigned short)(bg)*(unsigned short)(255 - (unsigned short)(alpha)) + \
+(unsigned short)128); \
+(composite) = (unsigned char)((temp + (temp >> 8)) >> 8); \
+}
+
+void Sakura::ToRGBFromRGBA(Picture * pic) {
+    if (pic->hasAlpha) {
+        unsigned char bgRed = 255;
+        unsigned char bgGreen = 255;
+        unsigned char bgBlue = 255;
+        int wh = pic->height * pic->width;
+        int size = wh * 3;
+        unsigned char * outBuf = new unsigned char[size];
+        for (int i = 0; i < wh; i++) {
+            const unsigned char * pixel_in = &pic->rgba[i * 4];
+            unsigned char * pixel_out = &outBuf[i * 3];
+            if (pixel_in[3] == 255) {
+                pixel_out[0] = pixel_in[0];
+                pixel_out[1] = pixel_in[1];
+                pixel_out[2] = pixel_in[2];
+            } else if (pixel_in[3] == 0) {
+                pixel_out[0] = bgRed;
+                pixel_out[1] = bgGreen;
+                pixel_out[2] = bgBlue;
+            } else {
+                alpha_composite(pixel_out[0], pixel_in[0], pixel_in[3], 255);
+                alpha_composite(pixel_out[1], pixel_in[1], pixel_in[3], 255);
+                alpha_composite(pixel_out[2], pixel_in[2], pixel_in[3], 255);
+            }
+        }
+        pic->hasAlpha = false;
+        pic->stride = pic->width * 3;
+        delete[] pic->rgba;
+        pic->rgba = NULL;
+        pic->rgba = outBuf;
+    }
+}
+
 Sakura::Picture *Sakura::Scale(Sakura::Picture * pic, int outWidth, int outHeight, Sakura::ScaleFilter scaleMode) {
     // ignore message: Warning: data is not aligned! This can lead to a speedloss
     av_log_set_level(AV_LOG_ERROR);

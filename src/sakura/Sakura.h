@@ -63,6 +63,7 @@ namespace Sakura {
     };
 
     Picture * Scale(Picture * pic, int outWidth, int outHeight, ScaleFilter scaleMode);
+    void ToRGBFromRGBA(Picture * pic);
     Picture * LoadFromFile(const char * filePath);
     Picture * LoadBitmap(const char * filePath);
     Picture * LoadBitmap(unsigned char * inputBuffer, unsigned long * bufSize);
