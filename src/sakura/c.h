@@ -34,6 +34,9 @@ extern void sakura_free_picture(sakura_picture_t* pic);
 
 extern sakura_picture_t* sakura_scale(sakura_picture_t* in_pic, int out_width, int out_height, int scale_filter, char** errptr);
 
+extern void sakura_to_rgb_from_rgba_bg_white(sakura_picture_t* in_pic, char** errptr);
+extern void sakura_to_rgb_from_rgba(sakura_picture_t* in_pic, unsigned char bg_red, unsigned char bg_green, unsigned char bg_blue, char** errptr);
+
 extern sakura_picture_t* sakura_load_png(unsigned char* input_buffer, unsigned long* buf_size, char** errptr);
 extern sakura_picture_t* sakura_load_png_file(const char* file_path, char** errptr);
 

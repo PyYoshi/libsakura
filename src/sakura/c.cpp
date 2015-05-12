@@ -22,6 +22,22 @@ sakura_picture_t* sakura_scale(sakura_picture_t* in_pic, int out_width, int out_
     }
 }
 
+void sakura_to_rgb_from_rgba_bg_white(sakura_picture_t* in_pic, char** errptr) {
+    try {
+        Sakura::ToRGBFromRGBA(in_pic->rep);
+    } catch (const Sakura::Exception * e) {
+        *errptr = strdup(e->what());
+    }
+}
+
+void sakura_to_rgb_from_rgba(sakura_picture_t* in_pic, unsigned char bg_red, unsigned char bg_green, unsigned char bg_blue, char** errptr) {
+    try {
+        Sakura::ToRGBFromRGBA(in_pic->rep, bg_red, bg_green, bg_blue);
+    } catch (const Sakura::Exception * e) {
+        *errptr = strdup(e->what());
+    }
+}
+
 sakura_picture_t* sakura_load_png(unsigned char* input_buffer, unsigned long* buf_size, char** errptr) {
     try {
         sakura_picture_t* result = new sakura_picture_t;
