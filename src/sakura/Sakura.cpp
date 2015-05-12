@@ -160,9 +160,9 @@ void Sakura::ToRGBFromRGBA(Picture * pic, unsigned char backgroundRed, unsigned 
                 pixel_out[1] = backgroundGreen;
                 pixel_out[2] = backgroundBlue;
             } else {
-                alpha_composite(pixel_out[0], pixel_in[0], pixel_in[3], 255);
-                alpha_composite(pixel_out[1], pixel_in[1], pixel_in[3], 255);
-                alpha_composite(pixel_out[2], pixel_in[2], pixel_in[3], 255);
+                alpha_composite(pixel_out[0], pixel_in[0], pixel_in[3], backgroundRed);
+                alpha_composite(pixel_out[1], pixel_in[1], pixel_in[3], backgroundGreen);
+                alpha_composite(pixel_out[2], pixel_in[2], pixel_in[3], backgroundBlue);
             }
         }
         pic->hasAlpha = false;
