@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <errno.h>
+
+// MacOSX
+#include <unistd.h>
 
 const char * SAMPLE_IMAGE_PATH_PNG = "./samples/sample.png";
 const char * SAMPLE_IMAGE_PATH_PNG_ALPHA = "./samples/sample_alpha.png";
