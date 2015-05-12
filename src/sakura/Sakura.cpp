@@ -140,10 +140,11 @@ unsigned short temp = ((unsigned short)(fg)*(unsigned short)(alpha) + \
 }
 
 void Sakura::ToRGBFromRGBA(Picture * pic) {
+    Sakura::ToRGBFromRGBA(pic, 255, 255, 255);
+}
+
+void Sakura::ToRGBFromRGBA(Picture * pic, unsigned char backgroundRed, unsigned char backgroundGreen, unsigned char backgroundBlue) {
     if (pic->hasAlpha) {
-        unsigned char bgRed = 255;
-        unsigned char bgGreen = 255;
-        unsigned char bgBlue = 255;
         int wh = pic->height * pic->width;
         int size = wh * 3;
         unsigned char * outBuf = new unsigned char[size];
@@ -155,9 +156,9 @@ void Sakura::ToRGBFromRGBA(Picture * pic) {
                 pixel_out[1] = pixel_in[1];
                 pixel_out[2] = pixel_in[2];
             } else if (pixel_in[3] == 0) {
-                pixel_out[0] = bgRed;
-                pixel_out[1] = bgGreen;
-                pixel_out[2] = bgBlue;
+                pixel_out[0] = backgroundRed;
+                pixel_out[1] = backgroundGreen;
+                pixel_out[2] = backgroundBlue;
             } else {
                 alpha_composite(pixel_out[0], pixel_in[0], pixel_in[3], 255);
                 alpha_composite(pixel_out[1], pixel_in[1], pixel_in[3], 255);
