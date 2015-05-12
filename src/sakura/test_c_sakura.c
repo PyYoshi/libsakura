@@ -677,10 +677,298 @@ void test_load_output_file(char * temp_dir) {
     test_file_load_webp_alpha_output_webp(temp_dir);
 }
 
+void test_to_rgb_from_rgba_bg_white_png_alpha_png(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_png_alpha_png: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(png_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_png_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_png_alpha_png.png"), png_alpha, 1, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_bg_white_png_alpha_jpeg(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_png_alpha_jpeg: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(png_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_jpeg_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_png_alpha_jpeg.jpg"), png_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_bg_white_png_alpha_webp(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_png_alpha_webp: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(png_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_webp_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_png_alpha_webp.webp"), png_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+
+void test_to_rgb_from_rgba_bg_white_webp_alpha_png(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_webp_alpha_png: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(webp_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_png_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_webp_alpha_png.png"), webp_alpha, 1, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_bg_white_webp_alpha_jpeg(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_webp_alpha_jpeg: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(webp_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_jpeg_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_webp_alpha_jpeg.jpg"), webp_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_bg_white_webp_alpha_webp(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_bg_white_webp_alpha_webp: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba_bg_white(webp_alpha, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_webp_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_bg_white_webp_alpha_webp.webp"), webp_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+
+void test_to_rgb_from_rgba_bg_white(char * temp_dir) {
+    test_to_rgb_from_rgba_bg_white_png_alpha_png(temp_dir);
+    test_to_rgb_from_rgba_bg_white_png_alpha_jpeg(temp_dir);
+    test_to_rgb_from_rgba_bg_white_png_alpha_webp(temp_dir);
+
+    test_to_rgb_from_rgba_bg_white_webp_alpha_png(temp_dir);
+    test_to_rgb_from_rgba_bg_white_webp_alpha_jpeg(temp_dir);
+    test_to_rgb_from_rgba_bg_white_webp_alpha_webp(temp_dir);
+}
+
+void test_to_rgb_from_rgba_png_alpha_png(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_png_alpha_png: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(png_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_png_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_png_alpha_png.png"), png_alpha, 1, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_png_alpha_jpeg(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_png_alpha_jpeg: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(png_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_jpeg_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_png_alpha_jpeg.jpg"), png_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_png_alpha_webp(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_png_alpha_webp: ");
+    char* err = NULL;
+    sakura_picture_t* png_alpha = sakura_load_png_file(SAMPLE_IMAGE_PATH_PNG_ALPHA, &err);
+    if (png_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(png_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_webp_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_png_alpha_webp.webp"), png_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(png_alpha);
+    FreeErrPtr(&err);
+}
+
+void test_to_rgb_from_rgba_webp_alpha_png(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_webp_alpha_png: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(webp_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_png_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_webp_alpha_png.png"), webp_alpha, 1, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_webp_alpha_jpeg(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_webp_alpha_jpeg: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(webp_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_jpeg_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_webp_alpha_jpeg.jpg"), webp_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+void test_to_rgb_from_rgba_webp_alpha_webp(char * temp_dir) {
+    printf("test_to_rgb_from_rgba_webp_alpha_webp: ");
+    char* err = NULL;
+    sakura_picture_t* webp_alpha = sakura_load_webp_file(SAMPLE_IMAGE_PATH_WEBP_ALPHA, &err);
+    if (webp_alpha == NULL || err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_to_rgb_from_rgba(webp_alpha, 200, 200, 200, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    sakura_output_webp_file(ConcatChar(temp_dir, "/test_to_rgb_from_rgba_webp_alpha_webp.webp"), webp_alpha, 100, &err);
+    if (err != NULL) {
+        printf("%s\n", err);
+        abort();
+    }
+    printf("success\n");
+    sakura_free_picture(webp_alpha);
+    FreeErrPtr(&err);
+}
+
+void test_to_rgb_from_rgba(char * temp_dir) {
+    test_to_rgb_from_rgba_png_alpha_png(temp_dir);
+    test_to_rgb_from_rgba_png_alpha_jpeg(temp_dir);
+    test_to_rgb_from_rgba_png_alpha_webp(temp_dir);
+
+    test_to_rgb_from_rgba_webp_alpha_png(temp_dir);
+    test_to_rgb_from_rgba_webp_alpha_jpeg(temp_dir);
+    test_to_rgb_from_rgba_webp_alpha_webp(temp_dir);
+}
+
 int main(int argc, char** argv) {
     char temp_dir[] = "/tmp/test_sakura_XXXXXX";
     int fd = mkdtemp(temp_dir);
-    printf("%s", temp_dir);
+    printf("%s\n", temp_dir);
     if (fd == EEXIST) {
         printf("Could not create a unique temporary filename\n");
         abort();
@@ -689,5 +977,7 @@ int main(int argc, char** argv) {
         abort();
     }
     test_load_output_file(temp_dir);
+    test_to_rgb_from_rgba_bg_white(temp_dir);
+    test_to_rgb_from_rgba(temp_dir);
     return 0;
 }
