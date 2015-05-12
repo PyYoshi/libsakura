@@ -75,6 +75,11 @@ add_executable(test_c_sakura ${TEST_C_SOURCE_FILES})
 add_dependencies(test_c_sakura ${SAKURA_STATIC_LIBRARY})
 target_link_libraries(test_c_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
 
+set(TEST_SOURCE_FILES ${LIBSAKURA_HOME}/test_sakura.cpp)
+add_executable(test_sakura ${TEST_SOURCE_FILES})
+add_dependencies(test_sakura ${SAKURA_STATIC_LIBRARY})
+target_link_libraries(test_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
+
 install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sakura)
 install(FILES ${SAKURA_STATIC_LIBRARY} ${SAKURA_STATIC_LIBRARY} ${SAKURA_SHARED_LIBRARY} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
