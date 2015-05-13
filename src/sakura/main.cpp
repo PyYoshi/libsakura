@@ -2,9 +2,9 @@
 
 using namespace std;
 
-int main() {
-    Sakura * sakura = new Sakura("./ionic.png");
-    SakuraPicture * pic = sakura->Scale(64, 64, SakuraScaleFilter::LANCZOS);
-    Sakura::OutputPng("./ionic2.png", pic);
+/**
+ * TODO: コマンドラインツールを作る
+ */
+int main(int argc, char **argv) {
     return 0;
 }
