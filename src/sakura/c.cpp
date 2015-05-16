@@ -1,6 +1,8 @@
 #include "c.h"
 #include "Sakura.h"
 
+#include <string.h>
+
 extern "C" {
 
 struct sakura_picture_t {Sakura::Picture* rep;};
