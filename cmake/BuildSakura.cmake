@@ -76,15 +76,17 @@ set_target_properties(
 #  DEPENDS ${SAKURA_STATIC_LIBRARY} COMBINED_LIBSAKURA
 #)
 
-set(TEST_C_SOURCE_FILES ${LIBSAKURA_HOME}/test_c_sakura.c)
-add_executable(test_c_sakura ${TEST_C_SOURCE_FILES})
-add_dependencies(test_c_sakura ${SAKURA_STATIC_LIBRARY})
-target_link_libraries(test_c_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(TEST_C_SOURCE_FILES ${LIBSAKURA_HOME}/test_c_sakura.c)
+  add_executable(test_c_sakura ${TEST_C_SOURCE_FILES})
+  add_dependencies(test_c_sakura ${SAKURA_STATIC_LIBRARY})
+  target_link_libraries(test_c_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
 
-set(TEST_SOURCE_FILES ${LIBSAKURA_HOME}/test_sakura.cpp)
-add_executable(test_sakura ${TEST_SOURCE_FILES})
-add_dependencies(test_sakura ${SAKURA_STATIC_LIBRARY})
-target_link_libraries(test_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
+  set(TEST_SOURCE_FILES ${LIBSAKURA_HOME}/test_sakura.cpp)
+  add_executable(test_sakura ${TEST_SOURCE_FILES})
+  add_dependencies(test_sakura ${SAKURA_STATIC_LIBRARY})
+  target_link_libraries(test_sakura ${SAKURA_DEPENDENCIES} ${PROJECT_SOURCE_DIR}/libsakura.a ${SAKURA_DEPENDENCIES})
+endif()
 
 install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sakura)
 install(TARGETS ${SAKURA_STATIC_LIBRARY} ${SAKURA_SHARED_LIBRARY}
