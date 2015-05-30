@@ -38,10 +38,10 @@ ExternalProject_Add(
 ExternalProject_Add(
 	FFMPEG
 	PREFIX					${THIRDPARTY_PREFIX_DIR}
-	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2
-	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && ./configure --prefix=${THIRDPARTY_PREFIX_DIR} ${FFMPEG_DEBUG} --disable-programs --disable-doc --disable-everything --disable-avdevice --disable-avcodec --disable-swresample --disable-postproc --disable-avfilter --disable-shared
-	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && make
-	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.2/ && make install
+	SOURCE_DIR				${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.3
+	CONFIGURE_COMMAND 		cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.3/ && ./configure --prefix=${THIRDPARTY_PREFIX_DIR} ${FFMPEG_DEBUG} --disable-programs --disable-doc --disable-everything --disable-avdevice --disable-avcodec --disable-swresample --disable-postproc --disable-avfilter --disable-shared
+	BUILD_COMMAND         	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.3/ && make
+	INSTALL_COMMAND       	cd ${THIRDPARTY_DIR_PATH}/FFmpeg-2.6.3/ && make install
 )
 
 ExternalProject_Add(
