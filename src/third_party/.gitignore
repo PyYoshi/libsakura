@@ -14,6 +14,9 @@
 *.lai
 *.orig
 *.Po
+*.d
+*.pc
+*.texi
 
 /lib/
 /root/
@@ -168,3 +171,12 @@
 /libjpeg-turbo-1.4.0/simd/.deps
 /libjpeg-turbo-1.4.0/simd/.libs
 /libjpeg-turbo-1.4.0/simd/Makefile
+
+/FFmpeg-2.6.3/.config
+/FFmpeg-2.6.3/.version
+/FFmpeg-2.6.3/config.asm
+/FFmpeg-2.6.3/config.fate
+/FFmpeg-2.6.3/config.h
+/FFmpeg-2.6.3/config.mak
+/FFmpeg-2.6.3/libavutil/avconfig.h
+/FFmpeg-2.6.3/libavutil/ffversion.h
